@@ -13,6 +13,12 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json());
 
-app.get("/prueba", control.prueba);
+app.get("/competencias", control.prueba);
+//app.get("/competencias/:id/peliculas", control.prueba);
+//app.get("/competencias/:idCompetencia/voto", control.prueba);
+//app.get("/generos", control.prueba);
+//app.get("/directores", control.prueba);
+//app.get("/actores", control.prueba);
+//app.get("/competencias/:id/resultados", control.prueba);
 
 app.listen(port, () => console.log("El servidor esta activo en el puerto " + port))
