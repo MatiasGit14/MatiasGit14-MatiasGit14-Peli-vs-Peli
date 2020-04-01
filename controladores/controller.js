@@ -1,8 +1,13 @@
 const connection = require("../bd/conexionbd");
 
 const control = {
-    prueba: (req, res) => {
-        res.json("Esto funciona");
+    getCompetencias: (req, res) => {
+
+        connection.query("SELECT nombre FROM competencias",
+            (error, results, fields) => {
+                if (error) console.error(error)
+                res.json({ data: results })
+            });
     }
 };
 

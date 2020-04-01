@@ -1,3 +1,3 @@
-const ports = 5500;
+const ports = { server: { port: 8080 } }
 
 module.exports = ports;
