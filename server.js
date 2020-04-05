@@ -14,8 +14,8 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.get("/competencias", control.getCompetencias);
-//app.get("/competencias/:id/peliculas", control.prueba);
-//app.get("/competencias/:idCompetencia/voto", control.prueba);
+app.get("/competencias/:id/peliculas", control.getPeliculas);
+app.post("/competencias/:idCompetencia/voto", control.postVotos);
 //app.get("/generos", control.prueba);
 //app.get("/directores", control.prueba);
 //app.get("/actores", control.prueba);

@@ -104,4 +104,4 @@ CREATE TABLE competencias (
   PRIMARY KEY(id)
   );
 
-  INSERT INTO competencias VALUES (1, "¿Qué película es mas graciosa?"),(2, "¿Qué película te asusto mas?"),(3, "¿Qué película es mejor de Tarantino?"),(4, "¿Qué película es peor de Adam Sandler?"),(5, "¿Qué película verías 100 veces?"),(6, "¿Qué película tiene mejor musica?"),(7, "¿Qué película te hizo llorar?"),(8, "¿Qué película es mejor de Vin Diesel?"),(9, "¿Qué película es la mejor de Ciencia Ficcion?"),(10, "¿Qué película es la mas aburrida de Meryl Streep?");
+  INSERT INTO competencias VALUES (1, "¿Qué película es mas graciosa?"),(2, "¿Qué película te asusto mas?"),(3, "¿Qué película es mejor de Spielberg?"),(4, "¿Qué película te gusta mas de Adam Sandler?"),(5, "¿Qué película te hizo llorar?"),(6, "¿Qué película es la mejor de Ciencia Ficcion?"),;
