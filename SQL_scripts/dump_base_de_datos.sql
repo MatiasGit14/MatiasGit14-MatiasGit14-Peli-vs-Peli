@@ -105,3 +105,12 @@ CREATE TABLE competencias (
   );
 
   INSERT INTO competencias VALUES (1, "¿Qué película es mas graciosa?"),(2, "¿Qué película te asusto mas?"),(3, "¿Qué película es mejor de Spielberg?"),(4, "¿Qué película te gusta mas de Adam Sandler?"),(5, "¿Qué película te hizo llorar?"),(6, "¿Qué película es la mejor de Ciencia Ficcion?"),;
+
+
+  CREATE TABLE votacion (
+  id INT NOT NULL AUTO_INCREMENT,
+  pelicula_id INT,
+  competencia_id INT NOT NULL,
+  votos INT DEFAULT(0),
+  PRIMARY KEY(id)
+  );
