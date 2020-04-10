@@ -12,7 +12,7 @@ const control = {
     getPeliculas: (req, res) => {
         let idCompetencia = req.params.id;
         let sqlCompe = "SELECT * FROM competencias AS c WHERE c.id = ? "
-        let sqlPeli = " SELECT * FROM pelicula p "
+        let sqlPeli = " SELECT p.id, p.titulo, p.poster FROM pelicula AS p "
 
 
         connection.query(sqlCompe, [idCompetencia],
@@ -38,7 +38,7 @@ const control = {
                             })
                         })
                 } else if (idCompetencia == 3) {
-                    connection.query(sqlPeli += " JOIN director_pelicula AS dp ON dp.pelicula_id = p.id WHERE dp.director_id = 3364 ORDER BY RAND() LIMIT 2", [idCompetencia],
+                    connection.query(sqlPeli += " LEFT JOIN director_pelicula AS dp ON dp.pelicula_id = p.id WHERE dp.director_id = 3364 ORDER BY RAND() LIMIT 2", [idCompetencia],
                         (error, peliculas, fields) => {
                             if (error) console.error(error);
                             res.json({
