@@ -112,7 +112,4 @@ const control = {
     }
 }
 
-
-
-
 module.exports = control;
