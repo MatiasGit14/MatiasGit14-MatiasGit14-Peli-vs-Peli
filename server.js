@@ -13,14 +13,21 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json());
 
-app.get("/competencias", control.getCompetencias);
+
+
 app.get("/competencias/:id/peliculas", control.getPeliculas);
 app.get("/competencias/:idCompetencia/resultados", control.getResultados);
+app.delete("/competencias/:idCompetencia/votos", control.deleteVotos);
 app.post("/competencias/:idCompetencia/voto", control.postVotos);
+app.put("/competencias/:idCompetencia", control.putNombreCompetencia);
+app.delete("/competencias/:idCompetencia", control.deleteCompetencia);
+app.get("/generos", control.getGeneros);
+app.get("/directores", control.getDirectores);
+app.get("/actores", control.getActores);
+app.post("/competencias", control.postCompetencias);
+app.get("/competencias", control.getCompetencias);
 
-//app.get("/generos", control.prueba);
-//app.get("/directores", control.prueba);
-//app.get("/actores", control.prueba);
+
 
 
 app.listen(server.port, () => console.log("El servidor esta activo en el puerto " + server.port))

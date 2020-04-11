@@ -114,3 +114,12 @@ CREATE TABLE competencias (
   votos INT DEFAULT(0),
   PRIMARY KEY(id)
   );
+
+  ALTER TABLE competencias ADD COLUMN competencia_genero INT UNSIGNED;
+  ALTER TABLE competencias ADD FOREIGN KEY (competencia_genero) REFERENCES genero (id);
+
+  ALTER TABLE competencias ADD COLUMN competencia_director INT UNSIGNED;
+  ALTER TABLE competencias ADD FOREIGN KEY (competencia_director) REFERENCES director (id);
+
+  ALTER TABLE competencias ADD COLUMN competencia_actor INT UNSIGNED;
+  ALTER TABLE competencias ADD FOREIGN KEY (competencia_actor) REFERENCES actor (id);
