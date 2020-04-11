@@ -74,6 +74,15 @@ const control = {
                                 peliculas: peliculas
                             })
                         })
+                } else if (idCompetencia > 6) {
+                    connection.query(sqlPeli += " JOIN competencias C ON c.competencia_genero = p.genero_id WHERE c.id = ?  ORDER BY RAND() LIMIT 2", [idCompetencia],
+                        (error, peliculas, fields) => {
+                            if (error) console.error(error);
+                            res.json({
+                                competencia: competencias[0].nombre,
+                                peliculas: peliculas
+                            })
+                        })
                 }
             })
     },
