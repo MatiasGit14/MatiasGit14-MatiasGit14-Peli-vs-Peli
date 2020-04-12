@@ -9,6 +9,16 @@ const control = {
                 res.json(competencias);
             })
     },
+    getCompetencia: (req, res) => {
+        if (!req.params.idCompetencia || isNaN(req.params.idCompetencia)) return res.status(400).send('Invalid Competencia id');
+        let idCompetencia = req.params.idCompetencia;
+        connection.query("SELECT * FROM competencias WHERE id = ?", [idCompetencia],
+            (error, competencia, fields) => {
+                if (error) console.error(error);
+                console.log(req.params);
+                res.json(competencia);
+            })
+    },
     getPeliculas: (req, res) => {
         if (!req.params.id || isNaN(req.params.id)) return res.status(400).send('Invalid Competencia id');
         let idCompetencia = req.params.id;
@@ -20,6 +30,10 @@ const control = {
             (error, competencias, fields) => {
                 if (error) console.error(error);
 
+                let genero = competencias[0].competencia_genero;
+                let actor = competencias[0].competencia_actor;
+                let director = competencias[0].competencia_director;
+                console.log(genero, actor, director);
                 if (idCompetencia == 1) {
                     connection.query(sqlPeli += " WHERE p.genero_id =5 ORDER BY RAND() LIMIT 2", [idCompetencia],
                         (error, peliculas, fields) => {
@@ -74,8 +88,98 @@ const control = {
                                 peliculas: peliculas
                             })
                         })
-                } else if (idCompetencia > 6) {
-                    connection.query(sqlPeli += " JOIN competencias C ON c.competencia_genero = p.genero_id WHERE c.id = ?  ORDER BY RAND() LIMIT 2", [idCompetencia],
+                } else if (genero > 0 && actor > 0 && director > 0) {
+                    console.log(genero, actor, director);
+                    connection.query(
+                        sqlPeli +=
+                        " JOIN actor_pelicula ap ON ap.actor_id = " + actor +
+                        " JOIN director_pelicula dp ON dp.director_id = " + director +
+                        " WHERE p.genero_id = " + genero + " AND ap.pelicula_id = p.id AND dp.pelicula_id = p.id" +
+                        " ORDER BY RAND() LIMIT 2", [idCompetencia],
+                        (error, peliculas, fields) => {
+                            if (error) console.error(error);
+                            res.json({
+                                competencia: competencias[0].nombre,
+                                peliculas: peliculas
+                            })
+                        })
+                } else if (genero == null && actor > 0 && director > 0) {
+                    console.log(genero, actor, director);
+                    connection.query(
+                        sqlPeli +=
+                        " JOIN actor_pelicula ap ON ap.actor_id = " + actor +
+                        " JOIN director_pelicula dp ON dp.director_id = " + director +
+                        " WHERE ap.pelicula_id = p.id AND dp.pelicula_id = p.id " +
+                        " ORDER BY RAND() LIMIT 2", [idCompetencia],
+                        (error, peliculas, fields) => {
+                            if (error) console.error(error);
+                            res.json({
+                                competencia: competencias[0].nombre,
+                                peliculas: peliculas
+                            })
+                        })
+                } else if (genero > 0 && actor == null && director > 0) {
+                    console.log(genero, actor, director);
+                    connection.query(
+                        sqlPeli +=
+                        " JOIN director_pelicula dp ON dp.director_id = " + director +
+                        " WHERE dp.pelicula_id = p.id AND p.genero_id = " + genero +
+                        " ORDER BY RAND() LIMIT 2", [idCompetencia],
+                        (error, peliculas, fields) => {
+                            if (error) console.error(error);
+                            res.json({
+                                competencia: competencias[0].nombre,
+                                peliculas: peliculas
+                            })
+                        })
+                } else if (genero > 0 && actor > 0 && director == null) {
+                    console.log(genero, actor, director);
+                    connection.query(
+                        sqlPeli +=
+                        " JOIN actor_pelicula ap ON ap.actor_id = " + actor +
+                        " WHERE ap.pelicula_id = p.id AND p.genero_id = " + genero +
+                        " ORDER BY RAND() LIMIT 2", [idCompetencia],
+                        (error, peliculas, fields) => {
+                            if (error) console.error(error);
+                            res.json({
+                                competencia: competencias[0].nombre,
+                                peliculas: peliculas
+                            })
+                        })
+                } else if (genero > 0 && actor == null && director == null) {
+                    console.log(genero, actor, director);
+                    connection.query(
+                        sqlPeli +=
+                        " WHERE p.genero_id = " + genero +
+                        " ORDER BY RAND() LIMIT 2", [idCompetencia],
+                        (error, peliculas, fields) => {
+                            if (error) console.error(error);
+                            res.json({
+                                competencia: competencias[0].nombre,
+                                peliculas: peliculas
+                            })
+                        })
+                } else if (genero == null && actor > 0 && director == null) {
+                    console.log(genero, actor, director);
+                    connection.query(
+                        sqlPeli +=
+                        " JOIN actor_pelicula ap ON ap.actor_id = " + actor +
+                        " WHERE ap.pelicula_id = p.id" +
+                        " ORDER BY RAND() LIMIT 2", [idCompetencia],
+                        (error, peliculas, fields) => {
+                            if (error) console.error(error);
+                            res.json({
+                                competencia: competencias[0].nombre,
+                                peliculas: peliculas
+                            })
+                        })
+                } else if (genero == null && actor == null && director > 0) {
+                    console.log(genero, actor, director);
+                    connection.query(
+                        sqlPeli +=
+                        " JOIN director_pelicula dp ON dp.director_id = " + director +
+                        " WHERE dp.pelicula_id = p.id" +
+                        " ORDER BY RAND() LIMIT 2", [idCompetencia],
                         (error, peliculas, fields) => {
                             if (error) console.error(error);
                             res.json({
@@ -131,16 +235,81 @@ const control = {
         let actorCompetencia = req.body.actor;
         let directorCompetencia = req.body.director;
 
-        if (!generoCompetencia || isNaN(generoCompetencia) || generoCompetencia === 0) {
-            generoCompetencia = null;
+        if (nombreComptencia == "") {
+            connection.query("",
+                (error, results, fields) => {
+                    if (error) console.error(error);
+                    if (!req.body) return res.status(400).send('Invalid body nombre');
+                    res.status(422).send("Nombre obligatorio");
+                })
         }
-        connection.query("INSERT INTO competencias (nombre, competencia_genero, competencia_actor, competencia_director) " +
-            " VALUES (" + "'" + nombreComptencia + "' , " + generoCompetencia + " , " + actorCompetencia + " , " + directorCompetencia + ")",
-            (error, results, fields) => {
-                if (error) console.error(error);
-                if (!req.body) return res.status(400).send('Invalid body nombre');
-                res.status(201).send("Creado correctamente");
-            })
+        if (generoCompetencia == 0 && actorCompetencia > 0 && directorCompetencia > 0) {
+            connection.query("INSERT INTO competencias (nombre, competencia_actor, competencia_director) " +
+                " VALUES (" + "'" + nombreComptencia + "' , " + actorCompetencia + " , " + directorCompetencia + ")",
+                (error, results, fields) => {
+                    if (error) console.error(error);
+                    if (!req.body) return res.status(400).send('Invalid body nombre');
+                    res.status(201).send("Creado correctamente");
+                })
+
+        } else if (actorCompetencia == 0 && directorCompetencia > 0 && generoCompetencia > 0) {
+            connection.query("INSERT INTO competencias (nombre, competencia_genero, competencia_director) " +
+                " VALUES (" + "'" + nombreComptencia + "' , " + generoCompetencia + " , " + directorCompetencia + ")",
+                (error, results, fields) => {
+                    if (error) console.error(error);
+                    if (!req.body) return res.status(400).send('Invalid body nombre');
+                    res.status(201).send("Creado correctamente");
+                })
+
+        } else if (directorCompetencia == 0 && actorCompetencia > 0 && generoCompetencia > 0) {
+            connection.query("INSERT INTO competencias (nombre, competencia_genero, competencia_actor) " +
+                " VALUES (" + "'" + nombreComptencia + "' , " + generoCompetencia + " , " + actorCompetencia + ")",
+                (error, results, fields) => {
+                    if (error) console.error(error);
+                    if (!req.body) return res.status(400).send('Invalid body nombre');
+                    res.status(201).send("Creado correctamente");
+                })
+
+        } else if (directorCompetencia > 0 && actorCompetencia > 0 && generoCompetencia > 0) {
+            connection.query("INSERT INTO competencias (nombre, competencia_genero, competencia_actor, competencia_director) " +
+                " VALUES (" + "'" + nombreComptencia + "' , " + generoCompetencia + " , " + actorCompetencia + " , " + directorCompetencia + ")",
+                (error, results, fields) => {
+                    if (error) console.error(error);
+                    if (!req.body) return res.status(400).send('Invalid body nombre');
+                    res.status(201).send("Creado correctamente");
+                })
+        } else if (directorCompetencia > 0 && actorCompetencia == 0 && generoCompetencia == 0) {
+            connection.query("INSERT INTO competencias (nombre, competencia_director) " +
+                " VALUES (" + "'" + nombreComptencia + "' , " + directorCompetencia + ")",
+                (error, results, fields) => {
+                    if (error) console.error(error);
+                    if (!req.body) return res.status(400).send('Invalid body nombre');
+                    res.status(201).send("Creado correctamente");
+                })
+        } else if (directorCompetencia == 0 && actorCompetencia > 0 && generoCompetencia == 0) {
+            connection.query("INSERT INTO competencias (nombre, competencia_actor) " +
+                " VALUES (" + "'" + nombreComptencia + "' , " + actorCompetencia + ")",
+                (error, results, fields) => {
+                    if (error) console.error(error);
+                    if (!req.body) return res.status(400).send('Invalid body nombre');
+                    res.status(201).send("Creado correctamente");
+                })
+        } else if (directorCompetencia == 0 && actorCompetencia == 0 && generoCompetencia > 0) {
+            connection.query("INSERT INTO competencias (nombre, competencia_genero) " +
+                " VALUES (" + "'" + nombreComptencia + "' , " + generoCompetencia + " )",
+                (error, results, fields) => {
+                    if (error) console.error(error);
+                    if (!req.body) return res.status(400).send('Invalid body nombre');
+                    res.status(201).send("Creado correctamente");
+                })
+        } else if (directorCompetencia == 0 && actorCompetencia == 0 && generoCompetencia == 0) {
+            connection.query(" ",
+                (error, results, fields) => {
+                    if (error) console.error(error);
+                    if (!req.body) return res.status(400).send('Invalid body nombre');
+                    res.status(422).send("Ingresar algun filtro");
+                })
+        }
     },
     deleteVotos: (req, res) => {
         if (!req.params.idCompetencia || isNaN(req.params.idCompetencia)) return res.status(400).send('Invalid Competencia id');
@@ -190,9 +359,9 @@ const control = {
     putNombreCompetencia: (req, res) => {
         if (!req.params.idCompetencia || isNaN(req.params.idCompetencia)) return res.status(400).send('Invalid Competencia id');
         let idCompetencia = req.params.idCompetencia;
-        let nuevoNombre = req.query.nombre;
-
-        connection.query("UPDATE competencias SET nombre = " + "'" + nuevoNombre + "'" + " WHERE id = ? ", [idCompetencia],
+        let nuevoNombre = req.body.nombre;
+        let sql = "UPDATE competencias SET nombre = " + "'" + nuevoNombre + "'" + " WHERE id = ? "
+        connection.query(sql, [idCompetencia],
             (error, results, fields) => {
                 if (error) console.error(error);
                 res.status(200).send("Nombre modificado");

@@ -17,15 +17,20 @@ app.use(bodyParser.json());
 
 app.get("/competencias/:id/peliculas", control.getPeliculas);
 app.get("/competencias/:idCompetencia/resultados", control.getResultados);
-app.delete("/competencias/:idCompetencia/votos", control.deleteVotos);
-app.post("/competencias/:idCompetencia/voto", control.postVotos);
-app.put("/competencias/:idCompetencia", control.putNombreCompetencia);
-app.delete("/competencias/:idCompetencia", control.deleteCompetencia);
+app.get("/competencias/:idCompetencia", control.getCompetencia);
+app.get("/competencias", control.getCompetencias);
 app.get("/generos", control.getGeneros);
 app.get("/directores", control.getDirectores);
 app.get("/actores", control.getActores);
+
+app.delete("/competencias/:idCompetencia/votos", control.deleteVotos);
+app.delete("/competencias/:idCompetencia", control.deleteCompetencia);
+
+app.post("/competencias/:idCompetencia/voto", control.postVotos);
 app.post("/competencias", control.postCompetencias);
-app.get("/competencias", control.getCompetencias);
+
+app.put("/competencias/:idCompetencia", control.putNombreCompetencia);
+
 
 
 
