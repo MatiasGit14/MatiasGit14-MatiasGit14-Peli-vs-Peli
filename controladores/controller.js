@@ -5,21 +5,20 @@ const control = {
 
         connection.query("SELECT * FROM competencias",
             (error, competencias, fields) => {
-                if (error) console.error(error);
+                if (error) return console.error(error);
                 res.json(competencias);
             })
     },
     getCompetencia: (req, res) => {
-        if (!req.params.idCompetencia || isNaN(req.params.idCompetencia)) return res.status(400).send('Invalid Competencia id');
         let idCompetencia = req.params.idCompetencia;
         connection.query("SELECT nombre, competencia_genero, competencia_actor, competencia_director FROM competencias WHERE id = ?", [idCompetencia],
-            (error, competencia, fields) => {
-                if (error) console.error(error);
-                res.json(competencia[0]); // OBTENER NOMBRES GENEROS ETC
+            (error, competencias, fields) => {
+                if (error) return console.error(error);
+                if (competencias.length == 0) return res.status(404).send("Competencia inexistente");
+                res.json(competencias[0]);
             })
     },
     getPeliculas: (req, res) => {
-        if (!req.params.id || isNaN(req.params.id)) return res.status(400).send('Invalid Competencia id');
         let idCompetencia = req.params.id;
         let sqlCompe = "SELECT * FROM competencias AS c WHERE c.id = ? "
 
@@ -82,8 +81,6 @@ const control = {
                 connection.query(sqlPeli, params,
                     (error, peliculas, fields) => {
                         if (error) return console.error(error);
-                        console.log(params);
-                        console.log(sqlPeli);
                         res.json({
                             competencia: competencia.nombre,
                             peliculas: peliculas
@@ -92,27 +89,32 @@ const control = {
             })
     },
     postVotos: (req, res) => {
-        if (!req.params.idCompetencia || isNaN(req.params.idCompetencia)) return res.status(400).send('Invalid Competencia id');
         let idCompetencia = req.params.idCompetencia;
-        let idPelicula = req.body.idPelicula;
-        // BUSCAR LA COMPETENCIA PARA VER SI EXISTE
-        connection.query(
-            "INSERT INTO votacion (pelicula_id, competencia_id, votos) " +
-            " VALUES (" + idPelicula + ',' + idCompetencia + ',' + " 1)", [idCompetencia],
-            (error, results, fields) => {
-                if (error) console.error(error);
-                if (!req.body) return res.status(400).send('Invalid body Pelicula ID');
-                res.json(results);
+
+        connection.query("SELECT * FROM competencias", [idCompetencia],
+            (error, competencias, fields) => {
+                if (error) return console.error(error);
+                if (competencias.length == 0) return res.status(404).send("Competencia inexistente");
+
+                let idPelicula = req.body.idPelicula;
+
+                connection.query(
+                    "INSERT INTO votacion (pelicula_id, competencia_id, votos) " +
+                    " VALUES ( ?, ?, 1)", [idPelicula, idCompetencia],
+                    (error, results, fields) => {
+                        if (error) return console.error(error);
+                        if (!req.body) return res.status(400).send('Invalid body Pelicula ID');
+                        res.json(results);
+                    })
             })
     },
     getResultados: (req, res) => {
-        if (!req.params.idCompetencia || isNaN(req.params.idCompetencia)) return res.status(400).send('Invalid Competencia id');
         let idCompetencia = req.params.idCompetencia;
 
         connection.query("SELECT nombre FROM competencias WHERE id = ?", [idCompetencia],
-            (error, competencia, fields) => {
-                if (error) console.error(error);
-
+            (error, competencias, fields) => {
+                if (error) return console.error(error);
+                if (competencias.length == 0) return res.status(404).send("Competencia inexistente");
                 connection.query(
                     "SELECT cuentaVotos.pelicula_id, cuentaVotos.competencia_id, cuentaVotos.votos,  p.titulo, p.poster " +
                     " FROM " +
@@ -124,8 +126,11 @@ const control = {
                     " JOIN competencias c ON c.id = cuentaVotos.competencia_id " +
                     " ORDER BY cuentaVotos.votos DESC LIMIT 3", [idCompetencia],
                     (error, votos, fields) => {
-                        if (error) console.error(error);
-                        res.json({ competencia: competencia[0].nombre, resultados: votos })
+                        if (error) return console.error(error);
+                        res.json({
+                            competencias: competencias[0].nombre,
+                            resultados: votos
+                        })
 
                     })
             })
@@ -221,58 +226,57 @@ const control = {
         }
     },
     deleteVotos: (req, res) => {
-        if (!req.params.idCompetencia || isNaN(req.params.idCompetencia)) return res.status(400).send('Invalid Competencia id');
         let idCompetencia = req.params.idCompetencia;
         connection.query("DELETE FROM votacion WHERE competencia_id = ? ", [idCompetencia],
-            (error, results, fields) => {
-                if (error) console.error(error);
+            (error, competencias, fields) => {
+                if (error) return console.error(error);
+                if (competencias.length == 0) return res.status(404).send("Competencia inexistente");
                 res.status(205).send("Reiniciado correctamente");
             })
     },
     getGeneros: (req, res) => {
         connection.query("SELECT * FROM genero ",
             (error, results, fields) => {
-                if (error) console.error(error);
+                if (error) return console.error(error);
                 res.json(results);
             })
     },
     getDirectores: (req, res) => {
         connection.query("SELECT * FROM director ",
             (error, results, fields) => {
-                if (error) console.error(error);
+                if (error) return console.error(error);
                 res.json(results);
             })
     },
     getActores: (req, res) => {
         connection.query("SELECT * FROM actor ",
             (error, results, fields) => {
-                if (error) console.error(error);
+                if (error) return console.error(error);
                 res.json(results);
             })
     },
     deleteCompetencia: (req, res) => {
-        if (!req.params.idCompetencia || isNaN(req.params.idCompetencia)) return res.status(400).send('Invalid Competencia id');
         let idCompetencia = req.params.idCompetencia;
 
         connection.query("DELETE FROM competencias WHERE id = ? ", [idCompetencia],
-            (error, results, fields) => {
-                if (error) console.error(error);
-
+            (error, competencias, fields) => {
+                if (error) return console.error(error);
+                if (competencias.length == 0) return res.status(404).send("Competencia inexistente");
                 connection.query("DELETE FROM votacion WHERE competencia_id = ? ", [idCompetencia],
                     (error, results, fields) => {
-                        if (error) console.error(error);
+                        if (error) return console.error(error);
                         res.status(200).send("Borrado correctamente");
                     })
             })
     },
     putNombreCompetencia: (req, res) => {
-        if (!req.params.idCompetencia || isNaN(req.params.idCompetencia)) return res.status(400).send('Invalid Competencia id');
         let idCompetencia = req.params.idCompetencia;
         let nuevoNombre = req.body.nombre;
         let sql = "UPDATE competencias SET nombre = " + "'" + nuevoNombre + "'" + " WHERE id = ? "
         connection.query(sql, [idCompetencia],
-            (error, results, fields) => {
-                if (error) console.error(error);
+            (error, competencias, fields) => {
+                if (error) return console.error(error);
+                if (competencias.length == 0) return res.status(404).send("Competencia inexistente");
                 res.status(200).send("Nombre modificado");
             })
     }
