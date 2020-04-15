@@ -99,20 +99,22 @@ INSERT INTO `director_pelicula` VALUES (1,3199,1),(2,3200,2),(3,3201,3),(242,320
 UNLOCK TABLES;
 
 CREATE TABLE competencias (
-  id INT NOT NULL AUTO_INCREMENT,
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   nombre VARCHAR(120),
   PRIMARY KEY(id)
   );
 
-  INSERT INTO competencias VALUES (1, "¿Qué película es mas graciosa?"),(2, "¿Qué película te asusto mas?"),(3, "¿Qué película es mejor de Spielberg?"),(4, "¿Qué película te gusta mas de Adam Sandler?"),(5, "¿Qué película te hizo llorar?"),(6, "¿Qué película es la mejor de Ciencia Ficcion?"),;
+  INSERT INTO competencias VALUES (1, "¿Qué película es mas graciosa?"), (2, "¿Qué película te asusto mas?"), (3, "¿Qué película te hizo llorar?");
 
-/*AGREGAR FOREIGN KEY CON EL UNSIGNED*/
+
   CREATE TABLE votacion (
   id INT NOT NULL AUTO_INCREMENT,
-  pelicula_id INT,
-  competencia_id INT NOT NULL,
+  pelicula_id INT UNSIGNED NOT NULL,
+  competencia_id INT UNSIGNED NOT NULL,
   votos INT DEFAULT(0),
-  PRIMARY KEY(id)
+  PRIMARY KEY(id),
+  FOREIGN KEY(pelicula_id) REFERENCES pelicula(id),
+  FOREIGN KEY(competencia_id) REFERENCES competencias(id)
   );
 
   ALTER TABLE competencias ADD COLUMN competencia_genero INT UNSIGNED;

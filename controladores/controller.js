@@ -77,10 +77,22 @@ const control = {
                         " WHERE dp.pelicula_id = p.id" +
                         " ORDER BY RAND() LIMIT 2";
                     params.push(competencia.competencia_director);
+                } else if (competencia.competencia_genero == null && competencia.competencia_actor == null && competencia.competencia_director == null) {
+                    sqlPeli += "WHERE p.genero_id = ? ORDER BY RAND() LIMIT 2";
+                    competencias.forEach((competencia) => {
+                        if (competencia.id == 1) {
+                            params.push(5);
+                        } else if (competencia.id == 2) {
+                            params.push(10);
+                        } else if (competencia.id == 3) {
+                            params.push(8);
+                        }
+                    });
                 }
                 connection.query(sqlPeli, params,
                     (error, peliculas, fields) => {
                         if (error) return console.error(error);
+                        console.log(sqlPeli, params);
                         res.json({
                             competencia: competencia.nombre,
                             peliculas: peliculas
