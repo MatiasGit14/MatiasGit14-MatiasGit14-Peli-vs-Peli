@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 
 
 
-app.get("/competencias/:id/peliculas", control.getPeliculas);
+app.get("/competencias/:idCompetencia/peliculas", control.getPeliculas);
 app.get("/competencias/:idCompetencia/resultados", control.getResultados);
 app.get("/competencias/:idCompetencia", control.getCompetencia);
 app.get("/competencias", control.getCompetencias);
