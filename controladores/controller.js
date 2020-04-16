@@ -148,11 +148,11 @@ const control = {
     },
     postCompetencias: (req, res) => {
         let nombreCompetencia = req.body.nombre;
-        if (!nombreCompetencia) return res.status(400).send('Nombre es un campo obligatorio');
 
         connection.query("SELECT nombre FROM competencias WHERE nombre = ?", [nombreCompetencia],
             (error, nombresCompetencias, fields) => {
                 if (error) return console.error(error);
+                if (!nombreCompetencia) return res.status(422).send('Nombre es un campo obligatorio');
                 if (nombresCompetencias.length > 0) return res.status(422).send("Este nombre de competencia ya existe");
 
                 let generoCompetencia = req.body.genero;
@@ -224,15 +224,14 @@ const control = {
                     cantPeliculas += " WHERE p.genero_id = ? ";
                     pelisParams.push(generoCompetencia);
 
+                } else {
+                    return res.status(422).send("Al menos un parametro es obligatorio");
                 }
-
-                if (nombreCompetencia && !req.body.genero && !req.body.actor && !req.body.director) return res.status(400).send("Al menos un parametro es obligatorio");
-
 
                 connection.query(cantPeliculas,
                     pelisParams, (error, results, fields) => {
                         if (error) return console.error(error);
-                        if (results[0].cantidad_peliculas < 2) return res.status(400).json("No hay dos peliculas que cumplan esos parametros");
+                        if (results[0].cantidad_peliculas < 2) return res.status(422).json("No hay dos peliculas que cumplan esos parametros");
 
                         connection.query(insertSql,
                             insertParams, (error, results, fields) => {
